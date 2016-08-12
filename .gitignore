@@ -1,0 +1,17 @@
+*.mp3
+.project
+.metadata
+bin/
+temp/
+.classpath
+.buildpath
+*.jar
+*.war
+*.ear
+
+hs_err_pid*
+
+*.class
+
+#Mobile Tools
+.mtj.tmp/
