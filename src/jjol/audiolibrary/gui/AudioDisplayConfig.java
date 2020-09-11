@@ -1,3 +1,4 @@
+package jjol.audiolibrary.gui;
 
 public class AudioDisplayConfig {
 

@@ -1,3 +1,4 @@
+package jjol.audiolibrary;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
@@ -7,23 +8,57 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import javax.swing.JFrame;
 
+import jjol.audiolibrary.gui.AudioDisplayConfig;
+import jjol.audiolibrary.gui.InputInterface;
+import jjol.audiolibrary.gui.WindowAudioDisplayer;
+import jjol.audiolibrary.loading.AudioLoader;
 
-public class Main {
+/*
+ * Author: Juan Jo Olivera
+ * Date: 11/09/2020
+ * Class: AppCore
+ * Description: Mounds Audio Display App and contains core loop
+ */
+public class AppCore {
 
 	private boolean running = false;
-	//private final static int WIDTH = 640; // 1200
 	private final static int WIDTH = 1200; // 1200
-	//private final static int HEIGHT = 640; // 400
 	private final static int HEIGHT = 400; // 400
-	
-	private WindowAudioDisplayer displayer;
 	
 	private BufferStrategy bs;
 	private Canvas canvas;
 	private int dFrames, dUpdates;
-	public static Font FONT = new Font("Arial", Font.PLAIN, 20);
+	public  Font FONT = new Font("Arial", Font.PLAIN, 20);
 	
-	public Main() {
+	private WindowAudioDisplayer displayer;
+	
+	public AppCore() {
+		// Window
+		initJFrameWindow();
+		InputInterface.initCanvasListeners(canvas);
+
+		// Load Audio
+		AudioLoader loader = null;
+		try {
+			loader = new AudioLoader("./hitnrun.wav");
+			loader.loadMusicArray();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
+		// Prepare App Displayer
+		AudioDisplayConfig adc = new AudioDisplayConfig();
+		adc.guiScale = 1f;
+		adc.scale = 1f;
+		displayer = new WindowAudioDisplayer(canvas.getWidth(), canvas.getHeight(), loader, adc);
+		
+		// Start Main Core Loop
+		running = true;
+		run();	
+	}
+	
+	public void initJFrameWindow() {
 		canvas = new Canvas();
 		canvas.setBackground(Color.BLACK);
 		canvas.setSize(WIDTH, HEIGHT);
@@ -38,28 +73,8 @@ public class Main {
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-
-		AudioLoader loader = null;
-		try {
-			loader = new AudioLoader("./waitingforlove.wav");
-			loader.loadMusicArray();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		InputInterface.initialize(canvas);
-		AudioDisplayConfig adc = new AudioDisplayConfig();
-		adc.guiScale = 1f;
-		adc.scale = 1f/4f;
-		//displayer = new WindowAudioDisplayer(canvas.getWidth(), canvas.getHeight(), loader, adc);
-		displayer = new WindowAudioDisplayer(canvas.getWidth(), canvas.getHeight(), loader, adc);
-		running = true;
-		run();
 	}
 	
-	public static void main(String[] args) {
-		new Main();
-	}
 	
 	public void run() {
 		final double UNS = 1e9 / 60;
@@ -80,8 +95,7 @@ public class Main {
 				frames++;
 				delta--;
 			}
-			//render();
-			//frames++;
+			
 			if(System.currentTimeMillis() - timer >= 1e3 ) {
 				dUpdates = updates;
 				dFrames = frames;
@@ -93,6 +107,7 @@ public class Main {
 	}
 	
 	public void update() {
+		// Update Display
 		displayer.update();
 	}
 	
@@ -102,12 +117,11 @@ public class Main {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		g.setFont(FONT);
+		
+		// Render Display
 		displayer.draw(g);
 		
-		// Draw Render Vars
-
-	    
-	     
+		// Draw Main Loop Render and Tick Information
 	    g.setColor(Color.WHITE);
 		String varInfo = String.format("Frames: %s  |  Updates: %s", dFrames, dUpdates);
 		g.drawString(varInfo, 10, canvas.getHeight()-30);
@@ -116,4 +130,9 @@ public class Main {
 		bs.show();
 	}
 	
+	
+	
+	public static void main(String[] args) {
+		new AppCore();
+	}
 }

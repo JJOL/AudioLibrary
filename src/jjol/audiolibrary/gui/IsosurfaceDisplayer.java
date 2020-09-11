@@ -1,5 +1,9 @@
+package jjol.audiolibrary.gui;
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import jjol.audiolibrary.analysis.MathUtils;
+import jjol.audiolibrary.loading.AudioLoader;
 
 public class IsosurfaceDisplayer extends Displayer {
 

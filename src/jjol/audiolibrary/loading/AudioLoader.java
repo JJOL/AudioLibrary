@@ -1,3 +1,4 @@
+package jjol.audiolibrary.loading;
 
 
 import java.io.File;
@@ -6,6 +7,7 @@ import java.io.FileNotFoundException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class AudioLoader implements Runnable {
 
@@ -227,11 +229,11 @@ public class AudioLoader implements Runnable {
 		//return allSamples;
 	}
 	
-	public void startSampling() {
-		sampling = true;
-		thread = new Thread(this);
-		thread.start();
-	}
+//	public void startSampling() {
+//		sampling = true;
+//		thread = new Thread(this);
+//		thread.start();
+//	}
 	
 	public void stop() {
 		nBytes = -1;
@@ -247,5 +249,15 @@ public class AudioLoader implements Runnable {
 	
 	
 	
+	public void play() {
+		Clip clip;
+		try {
+			clip = AudioSystem.getClip();
+			clip.open(AudioSystem.getAudioInputStream(file));
+			clip.start();
+		} catch(Exception e) {
+			
+		}
+	}
 	
 }

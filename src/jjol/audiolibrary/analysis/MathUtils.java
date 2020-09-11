@@ -1,3 +1,4 @@
+package jjol.audiolibrary.analysis;
 
 public class MathUtils {
 
